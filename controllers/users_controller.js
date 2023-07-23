@@ -1,9 +1,24 @@
 const User = require("../models/user");
 
 module.exports.profile = function (req, res) {
-  return res.render("user_profile", {
-    title: "User Profile",
-  });
+  if (req.cookies.user_id) {
+    User.findOne({ _id: req.cookies.user_id })
+      .then((user) => {
+        if (user) {
+          return res.render("user_profile", {
+            title: "User Profile",
+            user: user,
+          });
+        }
+        return res.redirect("/users/sign-in");
+      })
+      .catch((err) => {
+        console.error("Error in finding user for profile", err);
+        return res.redirect("/users/sign-in");
+      });
+  } else {
+    return res.redirect("/users/sign-in");
+  }
 };
 
 // render the sign up page
@@ -42,6 +57,20 @@ module.exports.create = async function (req, res) {
 };
 
 // sign in and create a session for the user
+
 module.exports.createSession = function (req, res) {
-  // TODO later
+  // Find User
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if (!user || user.password !== req.body.password) {
+        return res.redirect("back");
+      }
+
+      res.cookie("user_id", user.id);
+      return res.redirect("/users/profile");
+    })
+    .catch((err) => {
+      console.error("Error in finding user for login", err);
+      return res.redirect("/users/sign-in");
+    });
 };
