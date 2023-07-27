@@ -2,7 +2,7 @@
     Page Header
 
     <ul>
-        <% if (locals.user){ %>
+        <% if (locals.user?.id){ %>
             <li>
                 <a href="/users/profile">
                     <%= user.name %>
