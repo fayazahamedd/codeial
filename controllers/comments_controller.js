@@ -11,9 +11,9 @@ module.exports.create = async function (req, res) {
         post: req?.body?.post,
         id: req?.user?._id,
       });
-
       post.comments.push(comment);
       await post.save();
+      await comment.save();
       res.redirect("/");
     } else {
       res.status(404).json({ error: "Post not found" });
