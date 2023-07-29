@@ -4,6 +4,11 @@
     <ul>
         <% if (locals.user?.id){ %>
             <li>
+                <a href="/">
+                    Dashboard
+                </a>
+            </li>
+            <li>
                 <a href="/users/profile">
                     <%= user.name %>
                 </a>
