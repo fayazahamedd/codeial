@@ -14,13 +14,14 @@ module.exports.create = async (req, res) => {
       
       post.comments.push(comment);
       await post.save();
-      
+      req.flash('success','Comments added successfully');
       res.redirect("/");
     } else {
       res.status(404).json({ error: "Post not found" });
     }
   } catch (err) {
     // Handle any errors that occur during the execution of the function
+    req.flash('error','Unable to create the post');
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   }
@@ -38,12 +39,13 @@ module.exports.destroy = async function (req, res) {
       let postId = comment.post;
       await comment.remove();
       await Post.findByIdAndUpdate(postId, { $pull: { comments: req.params.id } });
+      req.flash('success','Comments deleted successfully');
       return res.redirect("back");
     } else {
       return res.redirect("back");
     }
   } catch (err) {
-    console.log("Error deleting comment and updating associated post:", err);
+    req.flash('error','Error deleting comment and updating associated post');
     return res.redirect("back");
   }
 };
