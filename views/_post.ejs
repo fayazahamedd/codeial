@@ -1,27 +1,109 @@
-<li id="post-<%= post._id %>">
-    <p>
-      <% if (locals.user && locals.user.id == post.user?.id) { %>
-        <small>
-          <a href="/posts/destroy/<%=post.id%>">X</a>
-        </small>
-        <% } %>
-          <%= post.content %> -> <%= post?.user?.name %>
-    </p>
-    <div class="post-comments">
-      <% if (locals.user){ %>
-        <form action="/comments/create" name="comments" method="post">
-          <input type="text" name="content" placeholder="Enter the comments.." required>
-          <input type="hidden" name="post" value="<%=post._id%>">
-          <input type="submit" value="post" />
-        </form>
-        <% } %>
-          <div class="post-comments-list">
-            <ul id="post-comments-<%=post._id %>">
-            <% for(comment of post.comments) { %>
-               <%- include('_comments') -%>
-            <% } %>
+<style>
+  /* Reset some default margin and padding */
+body, ul, li, p {
+    margin: 0;
+    padding: 0;
+}
 
-            </ul>
+/* Basic styling for the post card */
+.post-card {
+    width: 200%;
+    top: 100px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 40px;
+    background-color: #f8f8f8; /* Set your desired background color */
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    flex-wrap: wrap;
+}
+
+.post-card:hover {
+    background-color: #f0f0f0; /* Change background color on hover */
+}
+
+/* Styling for post content */
+.post-content {
+    margin-bottom: 10px;
+}
+
+.post-text {
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+.post-author {
+    color: #888;
+    font-size: 14px;
+}
+
+/* Styling for post actions */
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-post-button {
+  top: 10px;
+    color: #ff6347;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease; /* Smooth transition on hover */
+}
+
+.delete-post-button:hover {
+    color: #e74c3c; /* Change color on hover */
+}
+
+.toggle-like-button {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Optional: Style for comment form and list */
+.post-comments form {
+    margin-top: 10px;
+}
+
+.post-comments-list {
+    margin-top: 10px;
+}
+
+/* Add more styles as needed */
+
+</style>
+<body>
+  <ul class="post-list">
+      <!-- Repeat this li element for each post -->
+      <li class="post-card" id="post-<%= post._id %>">
+          <div class="post-content">
+              <p class="post-text">
+                  <%= post.content %><br> <%= post?.user?.name %>
+              </p>
+              <p class="post-author">
+                  Author: <%= post.user.name %>
+              </p>
           </div>
-    </div>
-  </li>
+          <div class="post-actions">
+              <% if (locals.user && locals.user.id == post.user?.id) { %>
+                  <a class="delete-post-button" href="/posts/destroy/<%=post.id%>">Delete</a>
+              <% } %>
+              <% if(locals.user) { %>
+                  <a href="/likes/toggle/?id=<%=post._id%>&type=Post" 
+                     data-likes="<%= post.likes.length %>" 
+                     class="toggle-like-button">
+                      <%= post.likes.length %> Likes
+                  </a>
+              <% } else { %>
+                  <%= post.likes.length %> Likes
+              <% } %>
+          </div>
+      </li>
+      <!-- End of li element -->
+  </ul>
+</body>

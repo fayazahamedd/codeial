@@ -1,1 +1,63 @@
-<footer>Custom Footer</footer>
+<style>
+/* Reset default margin and padding */
+body, h1, h2, h3, p, ul, li {
+    margin: 0;
+    padding: 0;
+}
+
+/* Create a flexbox layout */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Styling for the main content */
+.wrapper > *:first-child {
+    flex: 1;
+}
+
+/* Basic styling for the footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* Adjust the text styling */
+footer p {
+    font-size: 14px;
+    opacity: 0.7;
+}
+
+/* Make the copyright text stand out */
+footer p::before {
+    content: "\00a9"; /* Copyright symbol */
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+/* Make the copyright text more subtle */
+footer p::after {
+    content: ".";
+    opacity: 0.5;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+    footer {
+        padding: 15px 0;
+    }
+}
+
+
+</style>
+
+<body>
+    <!-- Your website content here -->
+    
+    <footer>
+        <p>2023 All rights reserved</p>
+    </footer>
+</body>

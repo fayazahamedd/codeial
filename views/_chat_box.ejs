@@ -1,0 +1,120 @@
+<style>
+	/* Chat Box Styles */
+/* Chat Box Styles */
+#user-chat-box {
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+#chat-messages-list {
+    list-style: none;
+    padding: 0;
+}
+
+#chat-messages-list li {
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.other-message {
+    background-color: #eaeaea;
+}
+
+.self-message {
+    background-color: #3498db;
+    color: white;
+    text-align: right;
+}
+
+/* Message Sender Styles */
+.message-sender {
+    display: block;
+    margin-bottom: 5px;
+    color: #3498db; /* Color for the sender's name */
+    font-weight: bold;
+}
+
+/* Responsive Design (Optional) */
+@media (max-width: 768px) {
+    /* Your responsive styles here */
+}
+
+/* Chat Message Input Styles */
+#chat-message-input-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+#chat-message-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#send-message {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+}
+
+#send-message:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive Design (Optional) */
+@media (max-width: 768px) {
+    /* Your responsive styles here */
+}
+
+
+
+/* Add more styles as needed */
+
+</style>
+<body>
+<% if (locals.user){ %>
+    <div id="user-chat-box">
+        <ul id="chat-messages-list">
+            <li class="other-message">
+                <span>Other Message</span>
+            </li>
+            <li class="self-message">
+                <span class="message-sender">You</span>
+            </li>
+        </ul>
+        <div id="chat-message-input-container">
+            <input id="chat-message-input" placeholder="Type message here">
+            <button id="send-message">Send</button>
+        </div>
+    </div>
+<% } %>
+</body>
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+    const chatMessageInput = document.getElementById("chat-message-input");
+    const sendMessageButton = document.getElementById("send-message");
+
+    sendMessageButton.addEventListener("click", function () {
+        const messageText = chatMessageInput.value.trim(); // Remove leading and trailing spaces
+
+        if (messageText !== "") {
+            chatMessageInput.value = "";
+        }
+    });
+});
+
+</script>

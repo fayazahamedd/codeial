@@ -1,29 +1,47 @@
 const Post = require("../models/post");
 const Comment = require("../models/comment");
+const commentsMailer = require("../mailer/comments_mailer");
+const queue = require("../config/kue");
+const commentEmailWorker = require("../worker/comment_email_worker");
 
-module.exports.create = async (req, res) => {
+module.exports.create = async function (req, res) {
   try {
-    const post = await Post.findById(req.body.post);
+    let post = await Post.findById(req.body.post);
 
     if (post) {
-      const comment = await Comment.create({
-        content: req?.body?.content, // Use 'content' instead of 'post'
-        post: req.body.post, // Use 'post' instead of 'content'
-        user: req?.user?._id, // Use 'user' instead of 'id'
+      let comment = await Comment.create({
+        content: req.body.content,
+        post: req.body.post,
+        user: req.user._id,
       });
-      
       post.comments.push(comment);
-      await post.save();
-      req.flash('success','Comments added successfully');
+      post.save();
+      comment = await comment.populate(["user"])
+      commentsMailer.newComment(comment);
+      let job = queue.create("emails", comment).save(function (err) {
+        if (err) {
+          console.log("Error in sending to the queue");
+          return;
+        }
+        console.log("job enqueued", job.id); 
+      }); 
+
+      if (req.xhr) {
+        return res.status(200).json({
+          data: {
+            comment: comment,
+          },
+          message: "Post created!",
+        });
+      }
+
+      req.flash("success", "Comment published!");
+
       res.redirect("/");
-    } else {
-      res.status(404).json({ error: "Post not found" });
     }
   } catch (err) {
-    // Handle any errors that occur during the execution of the function
-    req.flash('error','Unable to create the post');
-    console.error(err);
-    res.status(500).json({ error: "Internal server error" });
+    req.flash("error", err);
+    return;
   }
 };
 
@@ -38,15 +56,16 @@ module.exports.destroy = async function (req, res) {
     if (comment.user == req.user.id) {
       let postId = comment.post;
       await comment.remove();
-      await Post.findByIdAndUpdate(postId, { $pull: { comments: req.params.id } });
-      req.flash('success','Comments deleted successfully');
+      await Post.findByIdAndUpdate(postId, {
+        $pull: { comments: req.params.id },
+      });
+      req.flash("success", "Comments deleted successfully");
       return res.redirect("back");
     } else {
       return res.redirect("back");
     }
   } catch (err) {
-    req.flash('error','Error deleting comment and updating associated post');
+    req.flash("error", "Error deleting comment and updating associated post");
     return res.redirect("back");
   }
 };
-

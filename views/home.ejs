@@ -1,29 +1,172 @@
-<h1>Codeial / Home</h1>
-<section>
-  <h4>Post's</h4>
-  <% if (locals.user){ %>
-    <form action="/posts/create" id="new-post-form" method="post">
-      <textarea name="content" cols="30" rows="3" placeholder="Type here.."></textarea>
-      <input type="submit" value="post" />
-    </form>
-    <% } %>
+<style>
+/* Global Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-      <div id="posts-list-container">
-        <ul>
-          <% for(post of posts){ %>
+/* Container Styles */
+#home-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 20px;
+}
 
-            <%- include('_post') -%>
+/* Feed Posts Section Styles */
+#feed-posts {
+    width: 60%;
+}
 
-            <%} %>
-        </ul>
-      </div>
-</section>
+#new-post-form {
+    margin-bottom: 20px;
+}
 
-<section id="user-friends">
-  <h4>Friends</h4>
-  <% for (let u of all_users) { %>
-    <p>
-      <a href="/users/profile/<%= u.id %>"><%= u.name %></a>
-    </p>
-  <% } %>
-</section>
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+input[type="submit"] {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* User Friends Section Styles */
+#user-friends {
+    width: 30%;
+}
+
+#user-friends h4 {
+    margin-bottom: 10px;
+}
+
+#user-friends ul {
+    list-style: none;
+}
+
+#user-friends li {
+    margin-bottom: 5px;
+}
+
+#user-friends a {
+    text-decoration: none;
+    color: #3498db;
+}
+
+/* Chat Box Styles */
+#user-chat-box {
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Posts List Styles */
+#posts-list-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+/* Individual Post Styles */
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.post-content p {
+    margin: 10px 0;
+}
+
+.delete-post-button {
+    color: #ff6347;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.delete-post-button:hover {
+    color: #e74c3c;
+}
+
+.toggle-like-button {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Add more styles as needed */
+
+</style>
+
+<body>
+    <h1>CODEIAL / <%= title %></h1>
+
+    <div id="home-container">
+        <section id="feed-posts">
+            <h4>Posts</h4>
+            <% if(locals.user) { %>
+                <form action="/posts/create" id="new-post-form" method="POST">
+                    <textarea name="content" cols="30" rows="3" placeholder="Type Here..." required></textarea>
+                    <input type="submit" value="Post">
+                </form>
+            <% } %>
+    
+            <div id="posts-list-container">
+                <ul>
+                    <% for(post of posts) { %>
+                        <%- include("_post") -%>
+                    <% } %>
+                </ul>
+            </div>
+        </section>
+    
+        <section id="user-friends">
+            <h4>Friends</h4>
+            <ul>
+                <% for (u of all_users) { %>
+                    <li>
+                        <a href="/users/profile/<%= u.id %>"><%= u.name %></a>
+                    </li>
+                <% } %>
+            </ul>
+        </section>
+        <%- include('_chat_box') -%>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="/js/chat_engine.js"></script>
+    <script src="/js/toggle_likes.js"></script>
+    <script>
+        $('.toggle-like-button').each(function(){
+            let self = this;
+            let toggleLike = new ToggleLike(self);
+        });
+        <% if(locals.user) { %>
+            new ChatEngine('user-chat-box', '<%= locals.user.name %>');
+        <% } %>
+    </script>
+    <script src="/js/home_post_comments.js"></script>
+    <script src="/js/home_posts.js"></script>
+</body>
